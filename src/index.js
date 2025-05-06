@@ -10,7 +10,15 @@ dotenv.config({
 
 const app = express();
 
-connectDb();
+connectDb()
+  .then(
+    app.listen(process.env.PORT || 3000, () => {
+      console.log(`server is running at port ${process.env.PORT}`);
+    })
+  )
+  .catch((error) => {
+    console.log("mongodb connection failed !!!");
+  });
 
 // async () => {
 //     try {
