@@ -21,8 +21,16 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(409, "user already exist");
   }
 
-  const avatarLocalPath = req.files?.avatar[0]?.path;
-  const coverimageLocalPath = req.files?.avatar[0]?.path;
+  const avatarLocalPath = req.files?.avatar?.[0]?.path;
+  const coverimageLocalPath = req.files?.coverimage?.[0]?.path;
+  //   let coverimageLocalPath;
+  //   if (
+  //     req.files &&
+  //     Array.isArray(req.files.coverimage) &&
+  //     req.files.coverimage.length > 0
+  //   ) {
+  //     coverimageLocalPath = req.files.coverimage[0].path;
+  //   }
 
   if (!avatarLocalPath) {
     throw new ApiError(400, "all fields are required");
@@ -43,7 +51,7 @@ const registerUser = asyncHandler(async (req, res) => {
     username: username.toLowerCase(),
   });
 
-  const createdUser = await User.findById(User._id).select(
+  const createdUser = await User.findById(user._id).select(
     "-password -refreshtoken"
   );
 
