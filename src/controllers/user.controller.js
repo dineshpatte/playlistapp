@@ -113,6 +113,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const { refreshToken, accessToken } = await generateAccessAndRefreshTokens(
     user._id
   );
+  console.log(user._id);
 
   const loggedInUser = await User.findById(user._id).select(
     "-password -refreshToken"
@@ -260,6 +261,10 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     throw new ApiError(401, "avatar file is missing");
   }
 
+  if (user.avatarPublicId) {
+    await cloudinary.uploader.destroy(user.avatarPublicId);
+  }
+
   const avatar = await uploadOnCloudinary(avatarLocalPath);
 
   if (!avatar.url) {
@@ -292,7 +297,11 @@ const updateUserCoverimage = asyncHandler(async (req, res) => {
     throw new ApiError(401, "cover image file is missing");
   }
 
-  const coverimage = await uploadOnCloudinary(coverImageLocalPath);
+  if (user.coverimagePublicId) {
+    await cloudinary.uploader.destroy(user.coverimagePublicId);
+  }
+
+  const coverimage = await uploadOnCloudinary(coverimageLocalPath);
 
   if (!coverimage.url) {
     throw new ApiError(404, "error while uplaoding coverimage");
